@@ -1,0 +1,139 @@
+/* ===== Reset básico ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-white);
+}
+
+/* ===== Variáveis globais ===== */
+:root {
+  --color-bg: #0e1015;
+  --color-bg-hover: #1a1c22;
+  --color-accent: #00f5c9;
+  --color-white: #e5e7eb;
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-error: #f87171;
+  --color-success: #4ade80;
+}
+
+/* ===== Tipografia rápida ===== */
+.text-white {
+  color: var(--color-white);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ===== Botões reutilizáveis ===== */
+.btn {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-bg);
+  color: var(--color-white);
+}
+
+.btn-primary:hover,
+.btn-outline:hover {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  transition: background 0.3s ease, color 0.3s ease;
+
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-white);
+  color: var(--color-white);
+}
+
+
+/* ===== Espaçamento utilitário ===== */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+
+/* ===== Caixa translúcida (glass) ===== */
+.card-glass {
+  background: var(--color-glass);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 2rem;
+  color: var(--color-white);
+  box-shadow: 0 0 30px rgba(0, 255, 200, 0.05);
+}
+
+.btn-glass {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-glass:hover {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  box-shadow: 0 0 12px var(--color-accent), 0 0 32px var(--color-accent);
+}
+
+.card-glass-pulse {
+  background: var(--color-glass);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 2rem;
+  color: var(--color-white);
+  box-shadow: 0 0 12px rgba(0, 245, 201, 0.1);
+  animation: pulse-neon 2.5s ease-in-out infinite;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-glass-pulse:hover {
+  box-shadow: 0 0 16px var(--color-accent), 0 0 42px var(--color-accent);
+}
+
+@keyframes pulse-neon {
+  0% {
+    box-shadow: 0 0 8px rgba(0, 245, 201, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(0, 245, 201, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(0, 245, 201, 0.08);
+  }
+}
+
+
+
+
