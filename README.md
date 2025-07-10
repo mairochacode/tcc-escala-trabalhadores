@@ -23,15 +23,6 @@ Oferecer uma solução digital para facilitar o gerenciamento das escalas portu�
 
 ---
 
-## 📁 Estrutura do Projeto
-
-tcc-escala-trabalhadores/
-├── escala-trabalhadores-frontend/ # Interface em React
-├── escala-trabalhadores-backend/ # API em Node.js
-└── README.md
-
----
-
 ## 👩‍💻 Autora
 
 **Mairan Rocha**  
