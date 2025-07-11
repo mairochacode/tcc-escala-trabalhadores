@@ -1,91 +1,194 @@
-/* === CONTÊINER PRINCIPAL === */
+:root {
+  --color-bg: #0f0f0f;             /* fundo geral */
+  --color-panel: #1a1a1a;          /* painel central */
+  --color-white: #f5f5f5;          /* texto */
+  --color-gray-light: #e0e0e0;     /* bordas claras */
+  --color-gray-dark: #333333;      /* bordas ou texto escuro */
+  --color-accent: #ffffff;         /* destaque branco */
+  --color-border: #2b2b2b;         /* borda geral */
+}
+
+/* === CONTAINER PRINCIPAL === */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
-  background-color: var(--color-bg, #111317);
-  color: var(--color-white, #f5f5f5);
+  background-color: var(--color-bg);
+  color: var(--color-white);
+  overflow-x: hidden;
 }
 
-/* === CONTEÚDO PRINCIPAL === */
+/* === CONTEÚDO CENTRAL === */
 .dashboard-main {
-  margin-left: 80px;
-  padding: 2rem;
-  flex: 1;
-}
-
-/* === BOTÕES === */
-.btn-glass {
-  background-color: transparent;
-  border: 1px solid var(--color-accent, #00f5c9);
-  color: var(--color-accent, #00f5c9);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.btn-glass:hover {
-  background-color: var(--color-accent, #00f5c9);
-  color: #000;
-}
-
-.btn-primary {
-  background-color: var(--color-accent, #00f5c9);
-  color: #000;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.btn-primary:hover {
-  background-color: #0ff;
-}
-
-/* === CARD COM EFEITO GLASS + BORDA NEON === */
-.card-glass-pulse {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  box-shadow: 0 0 12px rgba(0, 245, 201, 0.3);
-  padding: 1.5rem;
-  transition: all 0.3s ease-in-out;
-}
-
-/* === FORMULÁRIO CENTRALIZADO === */
-.form-wrapper {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-top: 2rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4rem 2rem;
+  flex: 1;
+  min-height: 100vh;
+  background-color: var(--color-panel);
+  border-radius: 24px 0 0 24px;
+  box-shadow: -6px 0 24px rgba(0, 0, 0, 0.2);
 }
 
-/* === CAMPOS DE INPUT PADRONIZADOS === */
+.dashboard-main h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.dashboard-main p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #ccc;
+}
+
+/* === PAINEL COM EFEITO GLASS === */
+.form-glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+}
+
+/* === CABEÇALHO DO FORMULÁRIO === */
+.form-header {
+  margin-bottom: 2rem;
+}
+
+.form-header h2 {
+  color: var(--color-white);
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.form-header p {
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+
+/* === CONTEÚDO DO FORMULÁRIO === */
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-section-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-white);
+  margin-bottom: -1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === INPUTS E SELECTS === */
 .form-glass-input,
 .form-glass-select {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
-  padding: 0.5rem;
-  border-radius: 8px;
-  outline: none;
-  width: 100%;
+  background-color: #121212;
+  border: 1px solid var(--color-border);
+  color: var(--color-white);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
   font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-glass-input:focus,
+.form-glass-select:focus {
+  border: 1px solid #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 1px #ffffff44;
 }
 
 /* === LABELS === */
 .label-glass {
-  font-weight: bold;
-  color: var(--color-accent, #00f5c9);
-  margin-bottom: 0.3rem;
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
 }
 
-/* === SEÇÃO DE CAMPOS AGRUPADOS === */
+/* === BOTÕES === */
+.btn-glass,
+.btn-primary {
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-glass {
+  background: transparent;
+  border: 1px solid var(--color-white);
+  color: var(--color-white);
+}
+
+.btn-glass:hover {
+  background-color: var(--color-white);
+  color: #000;
+}
+
+.btn-primary {
+  background-color: var(--color-white);
+  color: #000;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-gray-light);
+  color: #000;
+}
+
+/* === SEÇÃO DE EQUIPES === */
 .field-group {
+  margin-top: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 1rem;
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 1200px) {
+  .dashboard-main {
+    padding: 2rem 1.5rem;
+  }
+
+  .form-glass-panel {
+    padding: 1.5rem;
+  }
+
+  .card-form {
+    max-width: 640px;
+    width: 100%;
+  }
+}
+
+/* === LAYOUT INLINE OPCIONAL === */
+.inline-field {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.inline-field label {
+  min-width: 80px;
 }
