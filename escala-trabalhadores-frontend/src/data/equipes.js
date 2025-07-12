@@ -1,26 +1,19 @@
 export const EQUIPES = {
-  conferentes: [
-    { codigo: "01", nome: "Balança" },
-    { codigo: "02", nome: "Chefe" },
-    { codigo: "03", nome: "Porão" },
-    { codigo: "04", nome: "Chefe em Altura" },
-    { codigo: "05", nome: "Planista" },
-    { codigo: "06", nome: "Planista em Altura" },
-    { codigo: "07", nome: "Porão em Altura" },
+  Conferentes: [
+    { codigo: "01", nome: "Conferente Geral" },
+    { codigo: "02", nome: "Conferente de Balança" },
+    { codigo: "03", nome: "Conferente de Carga" }
   ],
-  vigias: [
-    { codigo: "01", nome: "Portão Principal" },
-    { codigo: "02", nome: "Pátio de Caminhões" },
-    { codigo: "03", nome: "Área Restrita" },
+  Vigias: [
+    { codigo: "01", nome: "Vigia de Cais" },
+    { codigo: "02", nome: "Vigia de Portão" }
   ],
-  estivadores: [
-    { codigo: "01", nome: "Operador de Guindaste" },
-    { codigo: "02", nome: "Carregador" },
-    { codigo: "03", nome: "Supervisor de Carga" },
+  Estivadores: [
+    { codigo: "01", nome: "Estivador de Porão" },
+    { codigo: "02", nome: "Estivador de Convés" }
   ],
-  amarradores: [
-    { codigo: "01", nome: "Píer Frontal" },
-    { codigo: "02", nome: "Popa" },
-    { codigo: "03", nome: "Proa" },
-  ],
+  Amarradores: [
+    { codigo: "01", nome: "Amarrador de Proa" },
+    { codigo: "02", nome: "Amarrador de Popa" }
+  ]
 };
