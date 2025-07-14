@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* ===== RESET GLOBAL ===== */
 * {
   margin: 0;
@@ -5,29 +7,38 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: var(--color-bg);
-  color: var(--color-white);
 }
 
-/* ===== VARIÁVEIS GLOBAIS ===== */
+/* ===== VARIÁVEIS GLOBAIS (modo claro limpo) ===== */
 :root {
-  --color-bg: #0e1015;
-  --color-bg-hover: #1a1c22;
-  --color-white: #e5e7eb;
-  --color-accent: #ffffff; /* branco neutro */
+  --color-bg: #ffffff;
+  --color-bg-hover: #f4f4f4;
+  --color-accent: #000000;
   --color-error: #f87171;
   --color-success: #4ade80;
-  --color-glass: rgba(255, 255, 255, 0.04);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass: rgba(0, 0, 0, 0.04);
+  --color-glass-border: rgba(0, 0, 0, 0.08);
+  --color-text: #111111;
+  --color-panel: #f5f5f5;
 }
 
 /* ===== TIPOGRAFIA UTILITÁRIA ===== */
-.text-white { color: var(--color-white); }
-.text-accent { color: var(--color-accent); }
-.text-center { text-align: center; }
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+.text-center {
+  text-align: center;
+}
 
 /* ===== BOTÕES PADRÃO ===== */
 .btn {
@@ -40,27 +51,26 @@ html, body {
 }
 
 .btn-primary {
-  background-color: var(--color-white);
-  color: var(--color-bg);
+  background-color: var(--color-accent);
+  color: var(--color-white);
 }
 
 .btn-primary:hover {
-  background-color: #d4d4d4;
-  color: #000;
+  background-color: #222;
 }
 
 .btn-outline {
   background: transparent;
-  border: 1px solid var(--color-white);
-  color: var(--color-white);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
 }
 
 .btn-outline:hover {
-  background-color: var(--color-white);
-  color: var(--color-bg);
+  background-color: var(--color-accent);
+  color: var(--color-white);
 }
 
-/* ===== BOTÃO GLASS SIMPLES ===== */
+/* ===== BOTÃO GLASS (opcional) ===== */
 .btn-glass {
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -75,17 +85,29 @@ html, body {
 
 .btn-glass:hover {
   background-color: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-white);
 }
 
-/* ===== ESPAÇAMENTO UTILITÁRIO ===== */
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
+/* ===== ESPAÇAMENTOS ===== */
+.mt-1 {
+  margin-top: 0.5rem;
+}
+.mt-2 {
+  margin-top: 1rem;
+}
+.mt-3 {
+  margin-top: 1.5rem;
+}
 
-.p-1 { padding: 0.5rem; }
-.p-2 { padding: 1rem; }
-.p-3 { padding: 1.5rem; }
+.p-1 {
+  padding: 0.5rem;
+}
+.p-2 {
+  padding: 1rem;
+}
+.p-3 {
+  padding: 1.5rem;
+}
 
 /* ===== CONTAINER DE CARTÃO TRANSLÚCIDO ===== */
 .card-glass {
@@ -94,22 +116,22 @@ html, body {
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
-  color: var(--color-white);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  color: var(--color-accent);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
-/* ===== VARIANTE SEM ANIMAÇÃO ===== */
+/* ===== CARTÃO COM PULSO (hover leve) ===== */
 .card-glass-pulse {
   background: var(--color-glass);
   border: 1px solid var(--color-glass-border);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
-  color: var(--color-white);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  color: var(--color-accent);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
   transition: box-shadow 0.3s ease;
 }
 
 .card-glass-pulse:hover {
-  box-shadow: 0 0 24px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.06);
 }
