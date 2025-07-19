@@ -1,4 +1,5 @@
-import './SidebarOperador.css';
+import "../../styles/SidebarOperador.css";
+
 import { FaHome, FaClipboardList, FaChartBar, FaFileAlt } from 'react-icons/fa';
 import { useState } from 'react';
 
