@@ -81,6 +81,30 @@ function DashboardOperador() {
     setChamadasSalvas(chamadasArmazenadas);
   }, []);
 
+  // git NOVA FUNÇÃO — BUSCAR HABILITADOS
+  function getHabilitadosPorChamada(chamadaIndex) {
+    const habilitados = [];
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const chave = localStorage.key(i);
+
+      if (chave.startsWith("habilitacoes-")) {
+        const lista = JSON.parse(localStorage.getItem(chave)) || [];
+
+        lista.forEach((item) => {
+          if (item.chamadaIndex === chamadaIndex) {
+            habilitados.push({
+              nome: chave.replace("habilitacoes-", ""),
+              equipe: item.equipe,
+            });
+          }
+        });
+      }
+    }
+
+    return habilitados;
+  }
+
   return (
     <div className="dashboard-container">
       <SidebarOperador />
@@ -115,7 +139,51 @@ function DashboardOperador() {
             />
           </div>
 
-          <HistoricoRequisicoes chamadas={chamadasSalvas} />
+          {/*  HISTÓRICO COM HABILITADOS */}
+          <div className="historico">
+            <h2>Histórico de Requisições</h2>
+
+            {chamadasSalvas.length === 0 ? (
+              <p>Nenhuma requisição cadastrada.</p>
+            ) : (
+              chamadasSalvas.map((chamada, index) => {
+                const habilitados = getHabilitadosPorChamada(index);
+
+                return (
+                  <div key={index} className="card-glass">
+                    <p>
+                      <strong>Navio:</strong> {chamada.navio}
+                    </p>
+                    <p>
+                      <strong>Data:</strong> {chamada.data}
+                    </p>
+                    <p>
+                      <strong>Período:</strong> {chamada.periodo}
+                    </p>
+                    <p>
+                      <strong>Faina:</strong> {chamada.faina}
+                    </p>
+
+                    <div style={{ marginTop: "1rem" }}>
+                      <strong>Habilitados:</strong>
+
+                      {habilitados.length === 0 ? (
+                        <p>Ninguém se habilitou ainda.</p>
+                      ) : (
+                        <ul>
+                          {habilitados.map((h, i) => (
+                            <li key={i}>
+                              {h.nome} — {h.equipe}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </main>
     </div>
