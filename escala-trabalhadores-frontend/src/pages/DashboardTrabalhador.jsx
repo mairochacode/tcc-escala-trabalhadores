@@ -6,6 +6,7 @@ function DashboardTrabalhador() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [chamadas, setChamadas] = useState([]);
   const [atualizarTela, setAtualizarTela] = useState(false);
+  const [nomeTrabalhador, setNomeTrabalhador] = useState(user?.name || "");
 
   useEffect(() => {
     const chamadasSalvas =
@@ -92,19 +93,22 @@ function DashboardTrabalhador() {
     data,
     periodo,
   ) => {
+    if (!nomeTrabalhador.trim()) {
+      alert("Digite seu nome antes de se habilitar.");
+      return;
+    }
+
     const userId = user?.id || "anonimo";
+    const userName = nomeTrabalhador.trim() || user?.name || "Usuário";
     const chave = `habilitacoes-${userId}`;
     const habilitacoesAtuais = JSON.parse(localStorage.getItem(chave)) || [];
 
     const jaExiste = habilitacoesAtuais.some(
-      (item) =>
-        item.chamadaIndex === chamadaIndex &&
-        item.equipe === equipe &&
-        item.funcao === funcao,
+      (item) => item.chamadaIndex === chamadaIndex && item.equipe === equipe,
     );
 
     if (jaExiste) {
-      alert("Você já se habilitou para essa função.");
+      alert("Você já se habilitou para essa equipe.");
       return;
     }
 
@@ -123,13 +127,35 @@ function DashboardTrabalhador() {
       funcao,
       data,
       periodo,
+      userId,
+      nome: userName,
     };
 
     const atualizadas = [...habilitacoesAtuais, novaHabilitacao];
     localStorage.setItem(chave, JSON.stringify(atualizadas));
 
-    alert(`Você se habilitou para ${equipe} - ${funcao}`);
+    const chamadasAtualizadas =
+      JSON.parse(localStorage.getItem("chamadasPorto")) || [];
 
+    if (!chamadasAtualizadas[chamadaIndex].habilitados) {
+      chamadasAtualizadas[chamadaIndex].habilitados = [];
+    }
+
+    const jaEstaNaChamada = chamadasAtualizadas[chamadaIndex].habilitados.some(
+      (item) => item.userId === userId && item.equipe === equipe,
+    );
+
+    if (!jaEstaNaChamada) {
+      chamadasAtualizadas[chamadaIndex].habilitados.push({
+        userId,
+        nome: userName,
+        equipe,
+      });
+    }
+
+    localStorage.setItem("chamadasPorto", JSON.stringify(chamadasAtualizadas));
+
+    alert(`Você se habilitou para ${equipe}`);
     setAtualizarTela((prev) => !prev);
   };
 
@@ -144,10 +170,30 @@ function DashboardTrabalhador() {
 
     localStorage.setItem(chave, JSON.stringify(atualizadas));
 
-    alert("Habilitação removida!");
+    const chamadasAtualizadas =
+      JSON.parse(localStorage.getItem("chamadasPorto")) || [];
 
+    if (chamadasAtualizadas[chamadaIndex]?.habilitados) {
+      chamadasAtualizadas[chamadaIndex].habilitados = chamadasAtualizadas[
+        chamadaIndex
+      ].habilitados.filter(
+        (item) => !(item.userId === userId && item.equipe === equipe),
+      );
+    }
+
+    localStorage.setItem("chamadasPorto", JSON.stringify(chamadasAtualizadas));
+
+    alert("Habilitação removida!");
     setAtualizarTela((prev) => !prev);
   };
+
+  const minhasChamadas = chamadas.filter(
+    (chamada) =>
+      chamada.status === "lançada" &&
+      (chamada.escalados || []).some(
+        (item) => item.userId === (user?.id || "anonimo"),
+      ),
+  );
 
   return (
     <div className="dashboard-container">
@@ -155,8 +201,29 @@ function DashboardTrabalhador() {
       <main className="dashboard-main">
         <h1>Bem-vindo, {user?.name}</h1>
 
+        <div className="card-glass" style={{ marginBottom: "1.5rem" }}>
+          <label
+            style={{
+              display: "block",
+              marginBottom: "0.5rem",
+              fontWeight: "bold",
+            }}
+          >
+            Nome do trabalhador
+          </label>
+
+          <input
+            type="text"
+            value={nomeTrabalhador}
+            onChange={(e) => setNomeTrabalhador(e.target.value)}
+            placeholder="Digite seu nome"
+            className="form-glass-input"
+          />
+        </div>
+
         <section className="card-glass">
           <h3>Chamadas Disponíveis</h3>
+
           {chamadas.length === 0 ? (
             <p>Nenhuma requisição disponível no momento.</p>
           ) : (
@@ -165,74 +232,110 @@ function DashboardTrabalhador() {
                 <h4>
                   {chamada.navio} — {chamada.data} — {chamada.periodo}
                 </h4>
+                <p>
+                  <strong>Faina:</strong> {chamada.faina}
+                </p>
+                <p>
+                  <strong>Status:</strong> {chamada.status || "aberta"}
+                </p>
 
-                {chamada.equipes.map((eq, i) => {
-                  const userId = user?.id || "anonimo";
-                  const chave = `habilitacoes-${userId}`;
-                  const habilitacoesAtuais =
-                    JSON.parse(localStorage.getItem(chave)) || [];
+                {chamada.status === "aberta" &&
+                  chamada.equipes.map((eq, i) => {
+                    const userId = user?.id || "anonimo";
+                    const chave = `habilitacoes-${userId}`;
+                    const habilitacoesAtuais =
+                      JSON.parse(localStorage.getItem(chave)) || [];
 
-                  const jaHabilitado = habilitacoesAtuais.some(
-                    (item) =>
-                      item.chamadaIndex === index && item.equipe === eq.equipe,
-                  );
+                    const jaHabilitado = habilitacoesAtuais.some(
+                      (item) =>
+                        item.chamadaIndex === index &&
+                        item.equipe === eq.equipe,
+                    );
 
-                  return (
-                    <div key={i} style={{ marginTop: "1rem" }}>
-                      <strong>{eq.equipe}</strong>
+                    return (
+                      <div key={i} style={{ marginTop: "1rem" }}>
+                        <strong>{eq.equipe}</strong>
 
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "flex-start",
-                          gap: "1rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        <ul
-                          style={{ margin: 0, paddingLeft: "1.2rem", flex: 1 }}
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "flex-start",
+                            gap: "1rem",
+                            marginTop: "0.5rem",
+                          }}
                         >
-                          {Object.entries(eq.subfuncoes).map(
-                            ([codigo, qtd]) => (
-                              <li key={codigo} style={{ margin: "0.5rem 0" }}>
-                                {codigo} — {qtd} vaga(s)
-                              </li>
-                            ),
-                          )}
-                        </ul>
-
-                        {jaHabilitado ? (
-                          <button
-                            className="btn-glass"
+                          <ul
                             style={{
-                              backgroundColor: "#ff4d4d",
-                              color: "#fff",
+                              margin: 0,
+                              paddingLeft: "1.2rem",
+                              flex: 1,
                             }}
-                            onClick={() => removerHabilitacao(index, eq.equipe)}
                           >
-                            Remover habilitação
-                          </button>
-                        ) : (
-                          <button
-                            className="btn-glass"
-                            onClick={() =>
-                              habilitarTrabalhador(
-                                index,
-                                eq.equipe,
-                                "equipe-completa",
-                                chamada.data,
-                                chamada.periodo,
-                              )
-                            }
-                          >
-                            Habilitar-se
-                          </button>
-                        )}
+                            {Object.entries(eq.subfuncoes).map(
+                              ([codigo, qtd]) => (
+                                <li key={codigo} style={{ margin: "0.5rem 0" }}>
+                                  {codigo} — {qtd} vaga(s)
+                                </li>
+                              ),
+                            )}
+                          </ul>
+
+                          {jaHabilitado ? (
+                            <button
+                              className="btn-glass"
+                              style={{
+                                backgroundColor: "#ff4d4d",
+                                color: "#fff",
+                              }}
+                              onClick={() =>
+                                removerHabilitacao(index, eq.equipe)
+                              }
+                            >
+                              Remover habilitação
+                            </button>
+                          ) : (
+                            <button
+                              className="btn-glass"
+                              onClick={() =>
+                                habilitarTrabalhador(
+                                  index,
+                                  eq.equipe,
+                                  "equipe-completa",
+                                  chamada.data,
+                                  chamada.periodo,
+                                )
+                              }
+                            >
+                              Habilitar-se
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+              </div>
+            ))
+          )}
+        </section>
+
+        <section className="card-glass" style={{ marginTop: "2rem" }}>
+          <h3>Minhas Chamadas</h3>
+
+          {minhasChamadas.length === 0 ? (
+            <p>Você ainda não foi escalado em nenhuma chamada.</p>
+          ) : (
+            minhasChamadas.map((chamada, index) => (
+              <div key={index} className="card-glass mt-2">
+                <h4>
+                  {chamada.navio} — {chamada.data} — {chamada.periodo}
+                </h4>
+                <p>
+                  <strong>Faina:</strong> {chamada.faina}
+                </p>
+                <p>
+                  <strong>Status:</strong> {chamada.status}
+                </p>
               </div>
             ))
           )}

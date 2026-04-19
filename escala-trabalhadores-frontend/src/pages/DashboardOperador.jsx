@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import SidebarOperador from "../components/Sidebar/SidebarOperador";
-import { EQUIPES } from "../data/equipes";
 
-import {
-  FormRequisicao,
-  ResumoRequisicao,
-  HistoricoRequisicoes,
-} from "../components/Dashboard";
+import { FormRequisicao, ResumoRequisicao } from "../components/Dashboard";
 
 import "../styles/DashboardOperador.css";
 
@@ -20,6 +15,8 @@ function DashboardOperador() {
   const [equipes, setEquipes] = useState([{ equipe: "", funcoes: {} }]);
   const [resumo, setResumo] = useState(null);
   const [chamadasSalvas, setChamadasSalvas] = useState([]);
+  const [selecionados, setSelecionados] = useState({});
+  const [atualizarTela, setAtualizarTela] = useState(false);
 
   const adicionarEquipe = () => {
     setEquipes([...equipes, { equipe: "", funcoes: {} }]);
@@ -47,6 +44,7 @@ function DashboardOperador() {
           acc[codigo] = val.quantidade;
           return acc;
         }, {});
+
       return { equipe, subfuncoes };
     });
 
@@ -56,16 +54,21 @@ function DashboardOperador() {
       faina,
       data,
       equipes: equipesFormatadas,
+      status: "aberta",
+      habilitados: [],
+      escalados: [],
     });
   };
 
   const confirmarRequisicao = () => {
     const chamadasExistentes =
       JSON.parse(localStorage.getItem("chamadasPorto")) || [];
+
     const novasChamadas = [...chamadasExistentes, resumo];
     localStorage.setItem("chamadasPorto", JSON.stringify(novasChamadas));
 
     alert("Requisição salva com sucesso!");
+
     setResumo(null);
     setNavio("");
     setPeriodo("");
@@ -79,35 +82,75 @@ function DashboardOperador() {
     const chamadasArmazenadas =
       JSON.parse(localStorage.getItem("chamadasPorto")) || [];
     setChamadasSalvas(chamadasArmazenadas);
-  }, []);
+  }, [atualizarTela]);
 
-  // git NOVA FUNÇÃO — BUSCAR HABILITADOS
-  function getHabilitadosPorChamada(chamadaIndex) {
-    const habilitados = [];
+  const toggleSelecionado = (chamadaIndex, habilitado) => {
+    setSelecionados((prev) => {
+      const atuais = prev[chamadaIndex] || [];
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const chave = localStorage.key(i);
+      const jaExiste = atuais.some(
+        (item) =>
+          item.userId === habilitado.userId &&
+          item.equipe === habilitado.equipe,
+      );
 
-      if (chave.startsWith("habilitacoes-")) {
-        const lista = JSON.parse(localStorage.getItem(chave)) || [];
+      const novos = jaExiste
+        ? atuais.filter(
+            (item) =>
+              !(
+                item.userId === habilitado.userId &&
+                item.equipe === habilitado.equipe
+              ),
+          )
+        : [...atuais, habilitado];
 
-        lista.forEach((item) => {
-          if (item.chamadaIndex === chamadaIndex) {
-            habilitados.push({
-              nome: chave.replace("habilitacoes-", ""),
-              equipe: item.equipe,
-            });
-          }
-        });
-      }
+      return {
+        ...prev,
+        [chamadaIndex]: novos,
+      };
+    });
+  };
+
+  const lancarChamada = (chamadaIndex) => {
+    const chamadas = JSON.parse(localStorage.getItem("chamadasPorto")) || [];
+    const escolhidos = selecionados[chamadaIndex] || [];
+
+    if (escolhidos.length === 0) {
+      alert("Selecione pelo menos um trabalhador habilitado.");
+      return;
     }
 
-    return habilitados;
-  }
+    chamadas[chamadaIndex].escalados = escolhidos;
+    chamadas[chamadaIndex].status = "lançada";
+
+    localStorage.setItem("chamadasPorto", JSON.stringify(chamadas));
+    alert("Chamada lançada com sucesso!");
+
+    setAtualizarTela((prev) => !prev);
+  };
+
+  const excluirRequisicao = (indexParaExcluir) => {
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir esta requisição?",
+    );
+
+    if (!confirmar) return;
+
+    const chamadas = JSON.parse(localStorage.getItem("chamadasPorto")) || [];
+
+    const chamadasAtualizadas = chamadas.filter(
+      (_, index) => index !== indexParaExcluir,
+    );
+
+    localStorage.setItem("chamadasPorto", JSON.stringify(chamadasAtualizadas));
+    setChamadasSalvas(chamadasAtualizadas);
+    setAtualizarTela((prev) => !prev);
+  };
 
   return (
     <div className="dashboard-container">
       <SidebarOperador />
+
       <main className="dashboard-main">
         <h1>Olá, {user?.name}</h1>
         <p>
@@ -139,49 +182,102 @@ function DashboardOperador() {
             />
           </div>
 
-          {/*  HISTÓRICO COM HABILITADOS */}
           <div className="historico">
             <h2>Histórico de Requisições</h2>
 
             {chamadasSalvas.length === 0 ? (
               <p>Nenhuma requisição cadastrada.</p>
             ) : (
-              chamadasSalvas.map((chamada, index) => {
-                const habilitados = getHabilitadosPorChamada(index);
+              chamadasSalvas.map((chamada, index) => (
+                <div key={index} className="card-glass">
+                  <p>
+                    <strong>Navio:</strong> {chamada.navio}
+                  </p>
+                  <p>
+                    <strong>Data:</strong> {chamada.data}
+                  </p>
+                  <p>
+                    <strong>Período:</strong> {chamada.periodo}
+                  </p>
+                  <p>
+                    <strong>Faina:</strong> {chamada.faina}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {chamada.status || "aberta"}
+                  </p>
 
-                return (
-                  <div key={index} className="card-glass">
-                    <p>
-                      <strong>Navio:</strong> {chamada.navio}
-                    </p>
-                    <p>
-                      <strong>Data:</strong> {chamada.data}
-                    </p>
-                    <p>
-                      <strong>Período:</strong> {chamada.periodo}
-                    </p>
-                    <p>
-                      <strong>Faina:</strong> {chamada.faina}
-                    </p>
+                  <div style={{ marginTop: "1rem" }}>
+                    <strong>Habilitados:</strong>
 
-                    <div style={{ marginTop: "1rem" }}>
-                      <strong>Habilitados:</strong>
+                    {!chamada.habilitados ||
+                    chamada.habilitados.length === 0 ? (
+                      <p>Ninguém se habilitou ainda.</p>
+                    ) : (
+                      <div>
+                        {chamada.habilitados.map((h, i) => {
+                          const marcado = (selecionados[index] || []).some(
+                            (item) =>
+                              item.userId === h.userId &&
+                              item.equipe === h.equipe,
+                          );
 
-                      {habilitados.length === 0 ? (
-                        <p>Ninguém se habilitou ainda.</p>
-                      ) : (
-                        <ul>
-                          {habilitados.map((h, i) => (
-                            <li key={i}>
+                          return (
+                            <label
+                              key={i}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.5rem",
+                                margin: "0.5rem 0",
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={marcado}
+                                onChange={() => toggleSelecionado(index, h)}
+                              />
                               {h.nome} — {h.equipe}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
+                            </label>
+                          );
+                        })}
+
+                        {chamada.status !== "lançada" ? (
+                          <button
+                            className="btn-primary"
+                            style={{ marginTop: "1rem" }}
+                            onClick={() => lancarChamada(index)}
+                          >
+                            Lançar chamada
+                          </button>
+                        ) : (
+                          <div style={{ marginTop: "1rem" }}>
+                            <strong>Escalados:</strong>
+                            <ul>
+                              {(chamada.escalados || []).map((e, i) => (
+                                <li key={i}>
+                                  {e.nome} — {e.equipe}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <button
+                          className="btn-glass"
+                          style={{
+                            marginTop: "1rem",
+                            backgroundColor: "#ff4d4d",
+                            color: "#fff",
+                          }}
+                          onClick={() => excluirRequisicao(index)}
+                        >
+                          Excluir requisição
+                        </button>
+                      </div>
+                    )}
                   </div>
-                );
-              })
+                </div>
+              ))
             )}
           </div>
         </div>

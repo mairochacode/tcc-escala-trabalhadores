@@ -1,50 +1,67 @@
 import "../../styles/Login.css";
-
-import { useState } from 'react';
+import { useState } from "react";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [mensagem, setMensagem] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mensagem, setMensagem] = useState("");
 
-  const handleLogin = async (e) => {
+  const users = [
+    {
+      id: 1,
+      name: "Operador",
+      email: "operador@porto.com",
+      password: "123456",
+      role: "operador",
+    },
+    {
+      id: 2,
+      name: "Rafael",
+      email: "rafael@porto.com",
+      password: "123456",
+      role: "trabalhador",
+    },
+    {
+      id: 3,
+      name: "Jonas",
+      email: "jonas@porto.com",
+      password: "123456",
+      role: "trabalhador",
+    },
+  ];
+
+  const handleLogin = (e) => {
     e.preventDefault();
 
-    try {
-      const resposta = await fetch('http://localhost:3333/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const userEncontrado = users.find(
+      (user) => user.email === email && user.password === password,
+    );
 
-      const dados = await resposta.json();
+    if (!userEncontrado) {
+      setMensagem("E-mail ou senha inválidos.");
+      return;
+    }
 
-      if (resposta.ok) {
-        localStorage.setItem('token', dados.token);
-        localStorage.setItem('user', JSON.stringify(dados.user));
-        setMensagem('Login realizado com sucesso!');
+    localStorage.setItem("user", JSON.stringify(userEncontrado));
+    setMensagem("Login realizado com sucesso!");
 
-        if (dados.user.role === 'operador') {
-          window.location.href = '/dashboard-operador';
-        } else {
-          window.location.href = '/dashboard-trabalhador';
-        }
-      } else {
-        setMensagem(dados.error || 'Erro ao fazer login');
-      }
-    } catch (erro) {
-      console.error(erro);
-      setMensagem('Erro ao conectar com o servidor');
+    if (userEncontrado.role === "operador") {
+      window.location.href = "/dashboard-operador";
+    } else {
+      window.location.href = "/dashboard-trabalhador";
     }
   };
 
   return (
     <div className="login-background">
       <div className="glass-form">
-        <h1 className="welcome-title">Bem-vindo à <span>Waves</span></h1>
-        <p className="subtitle">Sistema de chamadas eficaz para trabalhadores portuários.</p>
+        <h1 className="welcome-title">
+          Bem-vindo à <span>Waves</span>
+        </h1>
+
+        <p className="subtitle">
+          Sistema de chamadas eficaz para trabalhadores portuários.
+        </p>
 
         <form onSubmit={handleLogin}>
           <input
@@ -67,7 +84,12 @@ function Login() {
         </form>
 
         {mensagem && (
-          <p style={{ marginTop: '1rem', color: mensagem.includes('sucesso') ? '#4ade80' : '#f87171' }}>
+          <p
+            style={{
+              marginTop: "1rem",
+              color: mensagem.includes("sucesso") ? "#4ade80" : "#f87171",
+            }}
+          >
             {mensagem}
           </p>
         )}
